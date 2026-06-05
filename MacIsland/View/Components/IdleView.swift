@@ -14,7 +14,7 @@ import Combine
 struct IdleView: View {
     @ObservedObject var store: IslandStore
     @EnvironmentObject var timerService: TimerService
-    @EnvironmentObject var musicService: SystemMusicService
+    @EnvironmentObject var musicService: MusicOrchestrator
     @EnvironmentObject var lyricsService: LyricsService
 
     @State private var currentTime = Date()

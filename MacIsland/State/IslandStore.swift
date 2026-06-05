@@ -121,9 +121,9 @@ final class IslandStore: ObservableObject {
     }
 
     /// Bind music service for auto-lyrics state transitions
-    func bindMusicService(_ musicService: SystemMusicService) {
-        musicService.$hasMedia
-            .combineLatest(musicService.$info)
+    func bindMusicService(_ orchestrator: MusicOrchestrator) {
+        orchestrator.$hasMedia
+            .combineLatest(orchestrator.$info)
             .receive(on: RunLoop.main)
             .sink { [weak self] hasMedia, info in
                 guard let self = self else { return }

@@ -12,7 +12,7 @@ import SwiftUI
 /// 歌词态视图 — 横向绕刘海胶囊：封面 + 歌词居中 + 进度/音波
 struct LyricsView: View {
     @ObservedObject var store: IslandStore
-    @EnvironmentObject var musicService: SystemMusicService
+    @EnvironmentObject var musicService: MusicOrchestrator
     @EnvironmentObject var lyricsService: LyricsService
 
     var body: some View {

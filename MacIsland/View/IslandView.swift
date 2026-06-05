@@ -12,7 +12,7 @@ import SwiftUI
 /// 灵动岛主视图
 struct IslandView: View {
     @StateObject private var store = IslandStore()
-    @EnvironmentObject var musicService: SystemMusicService
+    @EnvironmentObject var orchestrator: MusicOrchestrator
     @EnvironmentObject var lyricsService: LyricsService
     @EnvironmentObject var timerService: TimerService
     @EnvironmentObject var clipboardService: ClipboardService
@@ -48,7 +48,7 @@ struct IslandView: View {
             }
             .onAppear {
                 store.bindLyricsService(lyricsService)
-                store.bindMusicService(musicService)
+                store.bindMusicService(orchestrator)
                 store.bindTimerService(timerService)
                 store.bindClipboardService(clipboardService)
                 store.listenForNotifications()

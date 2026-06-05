@@ -38,7 +38,7 @@ MacIsland/
 │   ├── IslandState.swift       # 形态枚举 + 动画速度配置
 │   ├── IslandLayout.swift      # 各形态窗口尺寸/圆角 + 刘海信息（NotchInfo）
 │   ├── IslandStore.swift       # 形态状态机、空闲计时、服务绑定与自动切换
-│   ├── AppSettings.swift       # 用户偏好（动画/快捷键/番茄钟/剪贴板/壁纸/外观，UserDefaults 持久化）
+│   ├── AppSettings.swift       # 用户偏好（动画/快捷键/番茄钟/剪贴板/壁纸/外观/强调色，UserDefaults 持久化）
 │   ├── AlarmStore.swift        # 闹钟 CRUD + 持久化
 │   ├── BookmarkStore.swift     # 书签 CRUD + 持久化
 │   ├── EventStore.swift        # 倒计时/纪念日 CRUD + 持久化
@@ -91,7 +91,10 @@ MacIsland/
     │   ├── SystemMonitorServiceProtocol.swift
     │   └── HotkeyServiceProtocol.swift
     └── Implementations/
+        ├── MusicOrchestrator.swift        # 音乐编排器 — 唯一音乐状态源，回退检测链 + 封面缓存
         ├── SystemMusicService.swift       # 系统音乐检测与控制（AppleScript + 分布式通知 + CGWindowList）
+        ├── ShazamService.swift            # 听歌识曲（ShazamKit + AVAudioEngine）
+        ├── ArtworkCacheManager.swift      # 专辑封面双层缓存（内存 + 磁盘 JPEG）
         ├── LyricsService.swift            # 多源歌词（网易/QQ/酷狗/LRCLIB）
         ├── QWeatherService.swift          # 和风天气 + CoreLocation 定位
         ├── TimerService.swift             # 番茄钟 + 倒计时
@@ -121,6 +124,9 @@ MacIsland/
 
 ### 音乐与歌词
 - ✅ **音乐控制**：基于分布式通知 + `CGWindowList` + AppleScript 检测系统播放器（Apple Music、Spotify、QQ/酷狗/酷我/网易云音乐等），支持播放/暂停/上一首/下一首、进度与音量控制。
+- ✅ **MusicOrchestrator 编排器**：统一音乐状态源，自动订阅系统播放器变化，500ms 轮询回退检测链（CGWindowList → 无障碍 → Shazam 听歌识曲），集成封面缓存。
+- ✅ **听歌识曲**：基于 ShazamKit + AVAudioEngine，>5秒无数据时自动触发，支持麦克风权限管理。
+- ✅ **专辑封面缓存**：双层缓存（内存 + 磁盘 JPEG），30天过期自动清理，SHA-256 哈希键。
 - ✅ **同步歌词**：多源歌词获取（网易云 / QQ音乐 / 酷狗 / LRCLIB），按当前播放器智能选源，逐行高亮同步显示。
 
 ### 天气与计时
@@ -161,11 +167,13 @@ MacIsland/
 
 > 应用当前关闭了 App Sandbox（`com.apple.security.app-sandbox = false`）以支持系统级播放器检测与全局快捷键。
 
+### 外观主题
+- ✅ **外观模式**：深色/浅色/跟随系统，设置窗口与菜单栏即时切换。
+- ✅ **自定义强调色**：9 种预设色（蓝/紫/粉/红/橙/黄/绿/青/靛），全局即时生效。
+
 ## 下个版本计划 (v2.0.0)
 
 ### 优化设置
-- 📋 **设置面板重构**：分类更清晰，新增搜索功能，支持设置项描述与提示
-- 🎨 **外观主题**：深色/浅色/跟随系统，自定义强调色
 - 🔔 **通知中心**：统一管理所有通知历史，支持通知免打扰时段
 - ⚙️ **快捷键自定义 UI 优化**：可视化键位录制器，冲突检测提示
 - 🌐 **多语言支持**：中文/英文/日文切换

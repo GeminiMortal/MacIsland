@@ -13,7 +13,8 @@ import SwiftUI
 struct ExpandedView: View {
     @ObservedObject var store: IslandStore
     @EnvironmentObject var weatherService: QWeatherService
-    @EnvironmentObject var musicService: SystemMusicService
+    @ObservedObject private var settings = AppSettings.shared
+    @EnvironmentObject var musicService: MusicOrchestrator
     @EnvironmentObject var monitorService: SystemMonitorServiceImpl
 
     @State private var selectedTab: Tab = .overview
@@ -395,13 +396,13 @@ struct ExpandedView: View {
             Button { musicService.toggleShuffle() } label: {
                 Image(systemName: "shuffle")
                     .font(.system(size: 14))
-                    .foregroundColor(musicService.info.isShuffle ? .accentColor : .white.opacity(0.4))
+                    .foregroundColor(musicService.info.isShuffle ? Color.appAccent : .white.opacity(0.4))
             }
 
             Button { musicService.cycleRepeat() } label: {
                 Image(systemName: repeatIconName)
                     .font(.system(size: 14))
-                    .foregroundColor(musicService.info.repeatMode != 0 ? .accentColor : .white.opacity(0.4))
+                    .foregroundColor(musicService.info.repeatMode != 0 ? Color.appAccent : .white.opacity(0.4))
             }
         }
         .buttonStyle(.plain)
@@ -498,14 +499,14 @@ struct ToggleButton: View {
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(
                     isActive
-                        ? .accentColor
+                        ? Color.appAccent
                         : .white.opacity(isHovering ? 0.6 : 0.35)
                 )
                 .frame(width: 28, height: 28)
                 .background(
                     Circle()
                         .fill(isActive
-                            ? Color.accentColor.opacity(isHovering ? 0.2 : 0.1)
+                            ? Color.appAccent.opacity(isHovering ? 0.2 : 0.1)
                             : Color.white.opacity(isHovering ? 0.1 : 0.05))
                 )
         }

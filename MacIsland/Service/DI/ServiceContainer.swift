@@ -22,6 +22,9 @@ final class ServiceContainer {
     let timer: TimerService
     let clipboard: ClipboardService
     let hotkey: HotkeyService
+    let shazam: ShazamService
+    let artworkCache: ArtworkCacheManager
+    let orchestrator: MusicOrchestrator
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -50,6 +53,15 @@ final class ServiceContainer {
         self.timer = TimerService()
         self.clipboard = ClipboardService()
         self.hotkey = HotkeyService()
+        self.shazam = ShazamService()
+        self.artworkCache = ArtworkCacheManager()
+        self.orchestrator = MusicOrchestrator(
+            musicService: self.music,
+            lyricsService: self.lyrics,
+            timerService: self.timer,
+            shazamService: self.shazam,
+            artworkCache: self.artworkCache
+        )
 
         // Wire hotkey callbacks
         self.hotkey.onToggleIsland = { IslandWindowManager.shared.toggle() }
@@ -77,6 +89,7 @@ final class ServiceContainer {
 
     func startAll() {
         music.startMonitoring()
+        orchestrator.startMonitoring()
         monitor.startMonitoring()
         clipboard.startMonitoring()
         hotkey.startMonitoring()
@@ -84,6 +97,7 @@ final class ServiceContainer {
     }
 
     func stopAll() {
+        orchestrator.stopMonitoring()
         music.stopMonitoring()
         monitor.stopMonitoring()
         clipboard.stopMonitoring()

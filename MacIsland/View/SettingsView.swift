@@ -38,6 +38,16 @@ private struct GeneralSettingsView: View {
     var body: some View {
         Form {
             Section("外观") {
+                Picker("外观模式", selection: $settings.appearanceMode) {
+                    ForEach(AppAppearance.allCases) { mode in
+                        Label(mode.displayName, systemImage: mode.systemImage).tag(mode)
+                    }
+                }
+
+                LabeledContent("强调色") {
+                    AccentColorPicker(selection: $settings.accentColorOption)
+                }
+
                 LanguageSettingsView()
 
                 Toggle("开机自启动", isOn: $settings.launchAtLogin)
@@ -400,7 +410,7 @@ private struct AboutSettingsView: View {
         VStack(spacing: 10) {
             Image(systemName: "circle.fill")
                 .font(.system(size: 48))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.appAccent)
 
             Text("MacIsland")
                 .font(.title2.bold())
@@ -409,5 +419,29 @@ private struct AboutSettingsView: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}
+
+// MARK: - Accent Color Picker
+
+struct AccentColorPicker: View {
+    @Binding var selection: AccentColorOption
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(AccentColorOption.allCases) { option in
+                Button { selection = option } label: {
+                    Circle()
+                        .fill(option.color)
+                        .frame(width: 20, height: 20)
+                        .overlay(
+                            Circle()
+                                .strokeBorder(Color.white, lineWidth: selection == option ? 2.5 : 0)
+                        )
+                        .shadow(color: selection == option ? option.color.opacity(0.4) : .clear, radius: 3)
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 }

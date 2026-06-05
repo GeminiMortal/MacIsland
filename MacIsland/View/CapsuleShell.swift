@@ -17,7 +17,7 @@ struct CapsuleShell: View {
     @ObservedObject private var wallpaperStore = WallpaperStore.shared
     @ObservedObject private var settings = AppSettings.shared
     @EnvironmentObject var timerService: TimerService
-    @EnvironmentObject var musicService: SystemMusicService
+    @EnvironmentObject var musicService: MusicOrchestrator
     @EnvironmentObject var lyricsService: LyricsService
     @State private var isDragOver = false
 

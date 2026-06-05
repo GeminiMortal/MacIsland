@@ -42,6 +42,12 @@ struct MediaPlaybackInfo {
         guard t.isFinite && t >= 0 else { return "0:00" }
         return String(format: "%d:%02d", Int(t) / 60, Int(t) % 60)
     }
+
+    /// 缓存键：基于标题+艺术家的稳定哈希
+    var cacheKey: String { Self.cacheKey(title: title, artist: artist) }
+    static func cacheKey(title: String, artist: String) -> String {
+        "\(title.lowercased())|\(artist.lowercased())"
+    }
 }
 
 // MARK: - Music Service Protocol

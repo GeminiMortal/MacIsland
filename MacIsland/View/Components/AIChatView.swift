@@ -10,6 +10,7 @@ import SwiftUI
 // MARK: - AI Chat View
 
 struct AIChatView: View {
+    @ObservedObject private var settings = AppSettings.shared
     @ObservedObject private var ai = AIService.shared
     @State private var inputText = ""
     @State private var showConfig = false
@@ -160,7 +161,7 @@ struct AIChatView: View {
             .foregroundColor(.white)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color.accentColor))
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.appAccent))
             .buttonStyle(.plain)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -280,7 +281,7 @@ struct AIChatView: View {
                     .padding(.vertical, 8)
                     .background(
                         message.role == .user
-                            ? RoundedRectangle(cornerRadius: 12).fill(Color.accentColor.opacity(0.3))
+                            ? RoundedRectangle(cornerRadius: 12).fill(Color.appAccent.opacity(0.3))
                             : RoundedRectangle(cornerRadius: 12).fill(Color.fillSubtle)
                     )
 
@@ -317,7 +318,7 @@ struct AIChatView: View {
                 Button { sendMessage() } label: {
                     Image(systemName: "arrow.up.circle.fill")
                         .font(.system(size: 20))
-                        .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .textQuaternary : .accentColor)
+                        .foregroundColor(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .textQuaternary : Color.appAccent)
                 }
                 .buttonStyle(.plain)
                 .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)

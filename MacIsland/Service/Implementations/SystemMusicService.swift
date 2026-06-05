@@ -211,6 +211,8 @@ final class SystemMusicService: MusicServiceProtocol, ObservableObject {
         NetEaseAdapter(),
     ]
     private var activeAdapter: PlayerAdapter?
+    /// 只读访问当前适配器（供 MusicOrchestrator 判断检测方式）
+    var currentAdapter: PlayerAdapter? { activeAdapter }
     private var appleScriptAuthorized = false // 默认关闭，仅在确认有权限时启用
 
     #if DEBUG
@@ -677,7 +679,7 @@ final class SystemMusicService: MusicServiceProtocol, ObservableObject {
     private var metadataFetchTask: Task<Void, Never>?
 
     /// 当检测到新歌曲但缺少元数据时，在线获取封面和时长
-    private func enrichMetadata(title: String, artist: String) {
+    func enrichMetadata(title: String, artist: String) {
         metadataFetchTask?.cancel()
         metadataFetchTask = Task { @MainActor [weak self] in
             guard let self = self else { return }
@@ -941,6 +943,34 @@ final class SystemMusicService: MusicServiceProtocol, ObservableObject {
                     DispatchQueue.main.async { self.applyResult(result) }
                     return
                 }
+            }
+        }
+    }
+
+    /// 异步回退检测 — 纯 CGWindowList 扫描，返回结果而不直接应用（供 MusicOrchestrator 调用）
+    func attemptFallbackDetection() async -> NowPlayingResult? {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                guard let self = self else {
+                    continuation.resume(returning: nil)
+                    return
+                }
+                // 优先检测活跃播放器
+                if let activeBundleID = self.activeAdapter?.bundleID,
+                   let app = NSRunningApplication.runningApplications(withBundleIdentifier: activeBundleID).first,
+                   let result = self.readWindowTitle(pid: app.processIdentifier, appName: app.localizedName ?? activeBundleID) {
+                    continuation.resume(returning: result)
+                    return
+                }
+                // 兜底遍历
+                for player in self.players {
+                    guard !player.displayName.isEmpty,
+                          let app = NSRunningApplication.runningApplications(withBundleIdentifier: player.bundleID).first,
+                          let result = self.readWindowTitle(pid: app.processIdentifier, appName: player.displayName) else { continue }
+                    continuation.resume(returning: result)
+                    return
+                }
+                continuation.resume(returning: nil)
             }
         }
     }

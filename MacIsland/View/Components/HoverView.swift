@@ -11,7 +11,7 @@ import SwiftUI
 struct HoverView: View {
     @ObservedObject var store: IslandStore
     @EnvironmentObject var weatherService: QWeatherService
-    @EnvironmentObject var musicService: SystemMusicService
+    @EnvironmentObject var musicService: MusicOrchestrator
 
     var body: some View {
         HStack(spacing: Theme.Spacing.lg) {
